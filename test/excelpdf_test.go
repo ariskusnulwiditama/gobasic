@@ -126,7 +126,7 @@ func ConvertExcelToPDF(excelFilePath, pdfFilePath string) error {
 	pdf.SetLeftMargin(marginLeft)
 
 	// **Set font untuk judul**
-	pdf.SetFont("Times", "B", 14)
+	pdf.SetFont("Helvetica", "B", 14)
 
 	// **Tambahkan Header Dokumen**
 	title := "NO : B.1671-MMS-FST/OPD/MIM/01/2025\nKepada Yth : IBU JUWITA DAN ADMIN PCS (PT. PAS)\nDari : Merchant Implementation Management\n\n"
@@ -134,7 +134,7 @@ func ConvertExcelToPDF(excelFilePath, pdfFilePath string) error {
 	pdf.MultiCell(0, 8, title, "", "L", false)
 
 	// **Tambahkan Lampiran**
-	pdf.SetFont("Times", "", 12)
+	pdf.SetFont("Helvetica", "", 12)
 	lampiran := "Lampiran :\n"
 	pdf.SetX(marginLeft)
 	pdf.MultiCell(0, 10, lampiran, "", "L", false)
@@ -181,7 +181,7 @@ func ConvertExcelToPDF(excelFilePath, pdfFilePath string) error {
 	}
 
 	// **Buat Header Tabel**
-	pdf.SetFont("Arial", "B", 12)
+	pdf.SetFont("Helvetica", "B", 12)
 	pdf.SetX(marginLeft)
 	for i, header := range headers {
 		pdf.CellFormat(colWidths[i], 10, header, "1", 0, "C", false, 0, "")
@@ -189,7 +189,7 @@ func ConvertExcelToPDF(excelFilePath, pdfFilePath string) error {
 	pdf.Ln(-1)
 
 	// **Buat Isi Tabel**
-	pdf.SetFont("Arial", "", 10)
+	pdf.SetFont("Helvetica", "", 11)
 	for _, row := range data {
 		pdf.SetX(marginLeft)
 		for i, cell := range row {
@@ -202,10 +202,10 @@ func ConvertExcelToPDF(excelFilePath, pdfFilePath string) error {
 	pdf.Text(marginLeft, pdf.GetY()+85, "Jumlah : Aktivasi di kota tersebut yang didapatkan dari Lampiran SIK Soundbox")
 
 	// **Tambahkan Subtitle di Kanan Bawah**
-	pdf.SetFont("Times", "B", 13)
+	pdf.SetFont("Helvetica", "B", 13)
 	subTitle := "PT. BANK RAKYAT INDONESIA (PERSERO)Tbk.\nFUNDING & RETAIL PAYMENT STRATEGY DIVISION\nMerchant Implementation Management"
 	pdf.SetXY(marginLeft+150, pdf.GetY()+20)
-	pdf.MultiCell(0, 8, subTitle, "", "C", false)
+	pdf.MultiCell(0, 8, subTitle, "", "L", false)
 
 	// **Simpan PDF**
 	err := pdf.OutputFileAndClose(pdfFilePath)
