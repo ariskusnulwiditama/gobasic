@@ -1,0 +1,14 @@
+package test
+
+import "testing"
+
+func TestConcurrent(t *testing.T) {
+	t.Run("Test1", func(t *testing.T) {
+		t.Parallel()
+		// test code
+	})
+	t.Run("Test2", func(t *testing.T) {
+		t.Parallel()
+		// test code
+	})
+}
