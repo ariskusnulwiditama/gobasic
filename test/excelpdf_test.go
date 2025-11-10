@@ -2,6 +2,8 @@ package test
 
 import (
 	"fmt"
+	"sort"
+	"strings"
 	"testing"
 
 	"github.com/jung-kurt/gofpdf"
@@ -117,7 +119,7 @@ func GenerateExcel() (string, error) {
 
 // ConvertExcelToPDF membaca data dari file Excel dan menulisnya ke PDF
 
-func ConvertExcelToPDF(excelFilePath, pdfFilePath string) error {
+func GenerateToPDF(numData int, vendorname, pdfFilePath string) error {
 	pdf := gofpdf.New("L", "mm", "A4", "")
 	pdf.AddPage()
 
@@ -129,7 +131,7 @@ func ConvertExcelToPDF(excelFilePath, pdfFilePath string) error {
 	pdf.SetFont("Helvetica", "B", 14)
 
 	// **Tambahkan Header Dokumen**
-	title := "NO : B.1671-MMS-FST/OPD/MIM/01/2025\nKepada Yth : IBU JUWITA DAN ADMIN PCS (PT. PAS)\nDari : Merchant Implementation Management\n\n"
+	title := fmt.Sprintf("NO : B.1671-MMS-FST/OPD/MIM/01/2025\nKepada Yth : IBU JUWITA DAN ADMIN %s\nDari : Merchant Implementation Management\n\n", vendorname)
 	pdf.SetX(marginLeft)
 	pdf.MultiCell(0, 8, title, "", "L", false)
 
@@ -142,13 +144,13 @@ func ConvertExcelToPDF(excelFilePath, pdfFilePath string) error {
 	// **Header & Data Tabel**
 	headers := []string{"NO", "Jumlah", "Macam Yang Dikirim", "Keterangan"}
 	data := [][]string{
-		{"1", "15 (lima belas)", "Soundbox Beserta Kelengkapannya", "Mohon dapat diimplementasikan/diaktivasi Soundbox pada Merchant sesuai data terlampir"},
-		{"2", "1 (satu)", "Surat Izin Kerja", "Ditujukan kepada IBU JUWITA DAN ADMIN PCS (PT. PASIFIK CIPTA SOLUSI)"},
+		{"1", fmt.Sprintf("%d", numData), "Soundbox Beserta Kelengkapannya", "Mohon dapat diimplementasikan/diaktivasi Soundbox pada Merchant sesuai data terlampir"},
+		{"2", "1 (satu)", "Surat Izin Kerja", fmt.Sprintf("Ditujukan kepada IBU JUWITA DAN ADMIN %s", vendorname)},
 		{"3", "15 (lima belas)", "SIMCARD", "SIM CARD agar disesuaikan dengan kualitas jaringan di masing-masing Merchant"},
 	}
 
 	// **Hitung Lebar Kolom Otomatis**
-	pageWidth := 297.0 // Lebar A4 Landscape
+	pageWidth := 300.0 // Lebar A4 Landscape
 	totalPadding := 3.0 // Sisa ruang untuk border
 	availableWidth := pageWidth - (marginLeft * 2) - totalPadding
 
@@ -218,12 +220,135 @@ func ConvertExcelToPDF(excelFilePath, pdfFilePath string) error {
 }
 
 func TestConvertPdf(t *testing.T) {
-	excelFile := "output13.xlsx"
-	err := ConvertExcelToPDF(excelFile, "output13.pdf")
+	// excelFile := "output13.xlsx"
+	err := GenerateToPDF(10, "PT MENCARI CINTA SEJATI", "output11.pdf")
 	if err != nil {
 		t.Error(err)
 	}
 	fmt.Println("File PDF berhasil dibuat: output.pdf")
+}
+
+func UniqueEmails(emailCc string) []string {
+	uniqueMap := make(map[string]bool) // Map untuk menyimpan email unik
+	var uniqueSlice []string           // Slice hasil unik
+
+	// Pisahkan email berdasarkan koma
+	emails := strings.Split(emailCc, ",")
+	for _, email := range emails {
+		email = strings.TrimSpace(email) // Hapus spasi sebelum/sesudah email
+		if !uniqueMap[email] { // Cek apakah sudah ada di map
+			uniqueMap[email] = true
+			uniqueSlice = append(uniqueSlice, email)
+		}
+	}
+
+	return uniqueSlice
+}
+
+func TestUniqueEmails(t *testing.T) {
+	emailCc := "benisantoso7@gmail.com, benisantosa10@gmail.com,etvendya@gmail.com, ariskusnul@gmail.com, awiditama@aol.com,ghilman.zaki@gmail.com, etvendya@gmail.com, danielkisaran@gmail.com, hadinatajenta122@gmail.com,benisantoso7@gmail.com, benisantosa10@gmail.com,etvendya@gmail.com,ghilman.zaki@gmail.com, etvendya@gmail.com, danielkisaran@gmail.com, hadinatajenta122@gmail.com"
+		/* "tono@gmail.com, aris@gmail.com, lia@gmail.com, koko@gmail.com",
+	} */
+
+	uniqueEmails := UniqueEmails(emailCc)
+	fmt.Println(uniqueEmails)
+}
+
+func convertLessThan1000(num int) string {
+	angka := []string{
+		"", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan",
+		"sepuluh", "sebelas", "dua belas", "tiga belas", "empat belas", "lima belas", "enam belas",
+		"tujuh belas", "delapan belas", "sembilan belas",
+	}
+
+	puluh := []string{
+		"", "", "dua puluh", "tiga puluh", "empat puluh", "lima puluh",
+		"enam puluh", "tujuh puluh", "delapan puluh", "sembilan puluh",
+	}
+
+	ratus := []string{
+		"", "seratus", "dua ratus", "tiga ratus", "empat ratus", "lima ratus",
+		"enam ratus", "tujuh ratus", "delapan ratus", "sembilan ratus",
+	}
+
+	if num < 20 {
+		return angka[num]
+	} else if num < 100 {
+		return puluh[num/10] + " " + angka[num%10]
+	} else {
+		return ratus[num/100] + " " + convertLessThan1000(num%100)
+	}
+}
+
+func Terbilang(n int) string {
+	if n == 0 {
+		return "nol"
+	}
+	if n < 0 {
+		return "minus " + Terbilang(-n)
+	}
+
+	var result strings.Builder
+
+	// Handle miliaran
+	if n >= 1000000000 {
+		result.WriteString(convertLessThan1000(n/1000000000) + " miliar ")
+		n %= 1000000000
+	}
+
+	// Handle jutaan
+	if n >= 1000000 {
+		result.WriteString(convertLessThan1000(n/1000000) + " juta ")
+		n %= 1000000
+	}
+
+	// Handle ribuan
+	if n >= 1000 {
+		result.WriteString(convertLessThan1000(n/1000) + " ribu ")
+		n %= 1000
+	}
+
+	// Handle less than 1000
+	result.WriteString(convertLessThan1000(n))
+
+	// Trim trailing spaces
+	return strings.TrimSpace(result.String())
+}
+
+
+func TestTerbilang(t *testing.T) {
+	fmt.Printf("%d = %s\n", 1986587654, Terbilang(1986587654))
+}
+
+// func greedyAlgorithm
+func GreedyAlgorithm(coins []int, target int) ([]int, int) {
+	// Sort coins in descending order
+	sort.Slice(coins, func(i, j int) bool {
+		return coins[i] > coins[j]
+	})
+
+	result := []int{}
+	count := 0
+
+	for _, coin := range coins {
+		for target >= coin {
+			target -= coin
+			result = append(result, coin)
+			count++
+		}
+	}
+
+	return result, count
+}
+
+func TestGreedyAlgorithm(t *testing.T) {
+	coins := []int{1000, 500, 200, 100, 50, 20, 10, 5, 1}
+	target := 1234
+
+	result, count := GreedyAlgorithm(coins, target)
+
+	fmt.Printf("Coins used: %v\n", result)
+	fmt.Printf("Total coins used: %d\n", count)
 }
 
 

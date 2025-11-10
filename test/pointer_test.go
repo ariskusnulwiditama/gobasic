@@ -8,7 +8,7 @@ func double(x *int) {
 }
 
 func TestPointer(t *testing.T) {
-	var a = 3
+	a := 3
 	double(&a)
 	t.Log(a)
 	t.Log(&a)

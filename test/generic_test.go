@@ -98,13 +98,16 @@ type Num interface {
 	~int | ~int64 | ~float32 | ~float64
 }
 
+
 func Sum2[T Num](s []T) T {
+	// sum is initialized to the zero value of type T (e.g., 0 for int, 0.0 for float64)
 	var sum T
 	for _, v := range s {
 		sum += v
 	}
 	return sum
 }
+	
 
 type Person struct {
 	Name string

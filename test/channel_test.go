@@ -51,7 +51,7 @@ func TestChan1(t *testing.T) {
 
 	
 
-	for i:=0; i<2; i++ {
+	for range 2 {
 		select {
 			case avg := <-avgCh:
 				t.Log("Received average:", avg)
@@ -99,4 +99,23 @@ func workerer(id int, ch chan string) {
 	for v := range ch {
 		fmt.Printf("Worker %d received %s\n", id, v)
 	}
+}
+
+func TestChan4(t *testing.T) {
+	messages := make(chan int, 4)
+
+	go func ()  {
+		for {
+			i := <-messages
+			fmt.Println("received data", i)
+			time.Sleep(500 * time.Millisecond)
+		}
+	}()
+
+	for i := 1; i <= 5; i++ {
+		fmt.Println("sending data", i)
+		messages <- i
+	}
+
+	time.Sleep(2 * time.Second)
 }

@@ -2,6 +2,7 @@ package test
 
 import (
 	"errors"
+	"strings"
 	"testing"
 )
 
@@ -138,12 +139,124 @@ func TestSetInt(t *testing.T) {
 	
 }
 
-func TestIntx(t *testing.T) {
-	t.Log(Add(10, 10.54))
+func TestFindDuplicate(t *testing.T) {
+	
+	maping := make(map[string]int)
+	maping["andi"] = 1
+	maping["budi"] = 2
+	maping["caca"] = 3
+	for key, value := range maping {
+		// find duplicate
+		if value > 1 {
+			t.Log("Duplicate found:", key, value)
+		} else {
+			t.Log("No duplicate found:", key, value)
+		}
+	}
 
 }	
 
+func CountWords(text string) map[string]int  {
+	words := strings.Fields(text)
+	frequency := make(map[string]int)
+
+	for _, word := range words {
+		frequency[word]++
+	}
+
+	return frequency
+}
+
+func TestCountWords(t *testing.T) {
+	text := "hello world hello universe hello world"
+	frequency := CountWords(text)
+	t.Log(frequency)
+}
+
+func HasDuplicate(nums []int) bool {
+	seen := make(map[int]bool)
+	for _, num := range nums {
+		if seen[num] {
+			return true
+		}
+		seen[num] = true
+	}
+
+	return false
+}
+
+func TestHasDuplicate(t *testing.T) {
+	nums := []int{1, 2, 3, 4, 5, 1}
+	if HasDuplicate(nums) {
+		t.Log("Duplicate found")
+	} else {
+		t.Log("No duplicate found")
+	}	
+}
+
+func HasDuplicateIn(nums []int) map[int]int {
+	// yang mana angka dan posisi indexnya yang duplikat
+	seen := make(map[int]int)
+	duplicates := make(map[int]int)
+	for index, num := range nums {
+		if _, exists := seen[num]; exists {
+			duplicates[num] = index // menyimpan index terakhir dari duplikat
+		} else {
+			seen[num] = index // menyimpan index pertama dari angka tersebut
+		}
+	}
+
+	if len(duplicates) == 0 {
+		return map[int]int{-1: -1} // mengembalikan -1 jika tidak ada duplikat
+	}
+
+	return duplicates
+}
+
+func TestHasDuplicateIn(t *testing.T) {
+	nums := []int{1, 2, 3, 4, 5, 1, 1}
+	duplicates := HasDuplicateIn(nums)
+	if len(duplicates) > 0 && duplicates[0] != -1 {
+		t.Log("Duplicate found at index:", duplicates)
+	} else {
+		t.Log("No duplicate found")
+	}
+}
+
+func FindDuplicatesWithIndices(nums []int) (duplicates []int, duplicatesIndices map[int][]int) {
+	freq := make(map[int]int)
+	indices := make(map[int][]int)
+	duplicatesIndices = make(map[int][]int)
+
+	for i, n := range nums {
+		freq[n]++
+		indices[n] = append(indices[n], i)
+
+		if freq[n] > 1 {
+			duplicates = append(duplicates, n)
+			duplicatesIndices[n] = indices[n]
+		}
+	}
+
+	return duplicates, duplicatesIndices
+}
+
+func TestFindDuplicatesWithIndices(t *testing.T) {
+	nums := []int{1, 2, 3, 4, 5, 1, 2, 3, 4, 5}
+	duplicates, indices := FindDuplicatesWithIndices(nums)
+	t.Log("Duplicates:", duplicates)
+	t.Log("Indices of duplicates:", indices)
+}
+
 func TestFloatx(t *testing.T) {
+
+	myMap := map[string]any{}
+	myMap["name"] = "andi"
+	myMap["age"] = 20
+	myMap["height"] = true
+	myMap["weight"] = 70.5
 	t.Log(Divided(10.5, 0))
 }
+
+
 
