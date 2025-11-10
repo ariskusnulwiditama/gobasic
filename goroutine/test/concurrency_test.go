@@ -8,7 +8,7 @@ func TestConcurrent(t *testing.T) {
 		// test code
 	})
 	t.Run("Test2", func(t *testing.T) {
-		t.Parallel,,()
+		t.Parallel()
 		// test code
 	})
 }
