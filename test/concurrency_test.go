@@ -110,6 +110,7 @@ func TestWorkerPool(t *testing.T) {
 	results := make(chan string, 5)
 	var wg sync.WaitGroup
 
+	// start 3 workers
 	for w := 1; w <= 3; w++ {
 		wg.Add(1)
 		go WorkerPool(w, jobs, results, &wg)
@@ -121,6 +122,7 @@ func TestWorkerPool(t *testing.T) {
 	}
 	close(jobs)
 	
+	// close results channel after all workers are done
 	go func() {
 		wg.Wait()
 		close(results)
